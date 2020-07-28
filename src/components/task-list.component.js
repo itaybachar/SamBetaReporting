@@ -2,21 +2,28 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
-import AddTask from './add-task.component';
-import EditTask from './edit-task.component';
 import TaskModal from './task-modal.component';
 
 const Task = function ({ task, updateTable, deleteTask }) {
-
+	
     return (
         <tr>
             <td>{task.keywords}</td>
-            <td>{task.frequency}</td>
-            <td>{task.naics}</td>
-            <td>{task.org_id}</td>
+            <td>{task.frequency} days</td>
+            <td>
+	    {task.naics.map(cur => {
+			return `${cur.naicsTitle}(${cur.naicsCode})`;
+		    }).join(', ')}
+			    </td>
+            <td>
+		{task.org.map(cur => {
+			return `${cur.org.shortName}(${cur.org.code})`
+		}).join(', ')
+		}
+	    </td>
             <td>{task.email}</td>
             <td>
-                <EditTask task={task} reloadTable={updateTable}></EditTask>
+	    	<TaskModal task={task} reloadTable={updateTable} newTask={false} />
             </td>
             <td>
                 <Button className="btn btn-dark" onClick={() => deleteTask(task._id)} >Delete</Button>
@@ -38,7 +45,8 @@ export default class TaskList extends Component {
 
     updateTable() {
         axios.get('http://192.168.0.170:5000/tasks/')
-            .then(response => { this.setState({ tasks: response.data }) })
+            .then(response => {
+		    this.setState({ tasks: response.data }) })
             .catch(err => console.log(err));
     }
 
@@ -62,7 +70,7 @@ export default class TaskList extends Component {
         return (
             <div>
                 <div className="modal-footer d-flex justify-content-center">
-                    <AddTask reloadTable={this.updateTable}></AddTask>
+	    		<TaskModal reloadTable={this.updateTable} newTask={true} />
                 </div>
                 <Table striped bordered hover variant="dark">
                     <thead>

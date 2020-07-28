@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const taskSchema = new Schema({
-    keywords: {type: String, required: true, trim: true},
+    keywords: {type: String, trim: true},
     frequency: {type: String, required: true, trim: true},
-    org_id: {type: Number, required: true, trim: true},
-    naics: {type: Number, required: true, trim: true},
+    org: {type: Array, trim: true},
+    naics: {type: Array, trim: true},
     email: {type: String, required: true, trim: true}
 });
 

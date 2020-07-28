@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const scheduler = require('./scheduler/schedule');
 
 require('dotenv').config();
 
@@ -26,3 +27,4 @@ app.use('/tasks', taskRouter);
 app.listen(port, () =>{
     console.log(`Server is running on port ${port}`);
 });
+scheduler.startupTasks();

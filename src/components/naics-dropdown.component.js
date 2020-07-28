@@ -54,16 +54,13 @@ export default class NaicsDropdown extends Component {
 
 	getSelected() {
 		return this.state.selectedNaics.map(currentNaics => {
-			return <ToastSelected naics={currentNaics} callback={this.removeSelected}/>
+			return <ToastSelected naics={currentNaics} callback={this.removeSelected} key={currentNaics.naicsId}/>
 		})
 	}
 
 	removeSelected(val){
-
 		const index = this.state.selectedNaics.indexOf(val);
-		this.setState(prev =>({
-			selectedNaics: prev.selectedNaics.splice(index,index+1)
-		}))
+		this.state.selectedNaics.splice(index,1);
 		this.props.setHandler(this.state.selectedNaics);
 	}
 
@@ -73,10 +70,11 @@ export default class NaicsDropdown extends Component {
 
 
 	addSelected(val){
-		if(!this.state.selectedNaics.includes(val))
+		if(!this.state.selectedNaics.includes(val)){
 		this.setState(prev =>({
-			selectedNaics: [...prev.selectedNaics, val]
-		}))
+			selectedNaics: prev.selectedNaics.concat(val)
+		}), () => {this.props.setHandler(this.state.selectedNaics)});
+		}
 	}
 
 
@@ -86,7 +84,7 @@ export default class NaicsDropdown extends Component {
 		<Col>
                 <Dropdown>
                     <Dropdown.Toggle variant='secondary' >
-                        Search Organization
+                        Search NAICS
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
                         <Form.Control

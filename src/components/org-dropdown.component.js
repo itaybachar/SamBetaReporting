@@ -29,7 +29,7 @@ export default class OrgDropdown extends Component {
 
         this.state = {
             orgList: [],
-	    selectedOrgs: []
+	    selectedOrgs: props.defaultVal
         };
     }
 
@@ -51,17 +51,14 @@ export default class OrgDropdown extends Component {
 
 	getSelected() {
 		return this.state.selectedOrgs.map(currentOrg => {
-			return <ToastSelected org={currentOrg} callback={this.removeSelected}/>
+			return <ToastSelected org={currentOrg} callback={this.removeSelected} key={currentOrg.org.orgKey}/>
 		})
 	}
 
 	removeSelected(val){
-
 		const index = this.state.selectedOrgs.indexOf(val);
-		this.setState(prev =>({
-			selectedOrgs: prev.selectedOrgs.splice(index,index+1)
-		}))
-		this.props.defaultHandler(this.state.selectedOrgs);
+		this.state.selectedOrgs.splice(index,1);
+		this.props.setHandler(this.state.selectedOrgs)
 	}
 
     componentDidMount(){
@@ -70,10 +67,11 @@ export default class OrgDropdown extends Component {
 
 
 	addSelected(val){
-		if(!this.state.selectedOrgs.includes(val))
+		if(!this.state.selectedOrgs.includes(val)){
 		this.setState(prev =>({
-			selectedOrgs: [...prev.selectedOrgs, val]
-		}))
+			selectedOrgs: prev.selectedOrgs.concat(val)
+		}), () => {this.props.setHandler(this.state.selectedOrgs)});
+		}
 	}
 
 

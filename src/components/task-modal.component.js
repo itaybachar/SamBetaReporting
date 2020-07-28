@@ -3,6 +3,7 @@ import { Modal, Form, Button } from 'react-bootstrap';
 import OrgDropdown from './org-dropdown.component';
 import NaicsDropdown from './naics-dropdown.component';
 import axios from 'axios';
+import './component.css';
 
 export default class TaskModal extends Component {
 	constructor(props) {
@@ -14,6 +15,7 @@ export default class TaskModal extends Component {
 		this.setNaics = this.setNaics.bind(this);
 		this.setEmail = this.setEmail.bind(this);
 		this.submitTask = this.submitTask.bind(this);
+		this.state = {};
 
 		if(props.newTask) {
 			this.state = {
@@ -24,7 +26,7 @@ export default class TaskModal extends Component {
             			email: ' ',
             			show: false,
 				btnText: 'Add',
-				uri='http://192.168.0.170:5000/tasks/add'
+				uri: 'http://192.168.0.170:5000/tasks/add'
 
 			}
 		} 
@@ -36,8 +38,8 @@ export default class TaskModal extends Component {
             			naics: this.props.task.naics,
             			email: this.props.task.email,
             			show: false,
-				btnText: 'Edit'
-				uri=`http://192.168.0.170:5000/tasks/update/{this.props.task._id}`
+				btnText: 'Edit',
+				uri: `http://192.168.0.170:5000/tasks/update/${this.props.task._id}`
 			}
 		}
 	}
@@ -51,19 +53,19 @@ export default class TaskModal extends Component {
 	}
 	
 	setOrg(e) {
-		this.setState({ org: e.orgList });
+		this.setState({ org: e });
 	}
 
 	setNaics(e) {
-		this.setState({ naics: e.naicsList });
+		this.setState({ naics: e });
 	}
 	
 	setEmail(e) {
-		this.setState({ email: e.target.valued });
+		this.setState({ email: e.target.value });
 	}
 
-	submitTask(e) {
-		axios.post({this.state.uri},this.state)
+	submitTask() {
+		axios.post(this.state.uri,this.state)
 		.then(response => {
 			this.setState({ show:false });
 			this.props.reloadTable();
@@ -71,7 +73,8 @@ export default class TaskModal extends Component {
 		.catch(err => console.log(err));
 	}
 
-	render(
+	render() {
+		return(
 		<>
 			<Button className='btn btn-dark' onClick={() =>this.setState({ show:true })} >
 				{this.state.btnText} Task	
@@ -85,10 +88,11 @@ export default class TaskModal extends Component {
 					<Form>
 						<Form.Group controlId='keyboards'>
 							<Form.Label>Keywords</Form.Label>
-							<Form.Control placeholder='Keywords' onChange{(e) => {this.setKeywords(e)}} />
+							<Form.Control placeholder='Keywords' onChange={(e) => {this.setKeywords(e)}} />
 							<Form.Text className='text-muted'>Comma Separated</Form.Text>
 						</Form.Group>
 						<NaicsDropdown defaultVal={this.state.naics} setHandler={this.setNaics}/>
+						<br></br>
 						<OrgDropdown defaultVal={this.state.org} setHandler={this.setOrg}/>
 						<Form.Group controlId='frequency'>
 							<Form.Label>Frequency</Form.Label>
@@ -107,14 +111,16 @@ export default class TaskModal extends Component {
 						<Form.Group controlId='formBasicEmail'>
 							<Form.Label>Email Address</Form.Label>
 							<Form.Control type='email' placeholder='Enter Email' onChange={(e) => {this.setEmail(e)}}/>
+						</Form.Group>
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
 					<Button variant='secondary' onClick={() => this.setState({ show: false })}>Close</Button>
-					<Button variant='primary' onClick{() => this.submitForm()}>Submit</Button>
+					<Button variant='primary' onClick={() => this.submitTask()}>Submit</Button>
 				</Modal.Footer>
 			</Modal>
 		</>
 	)
 
+	}
 }
