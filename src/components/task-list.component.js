@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
-import AddTask from './add-task.component'
-import EditTask from './edit-task.component'
+import AddTask from './add-task.component';
+import EditTask from './edit-task.component';
+import TaskModal from './task-modal.component';
 
 const Task = function ({ task, updateTable, deleteTask }) {
 

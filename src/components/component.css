@@ -1,0 +1,11 @@
+.dropdown-menu {
+	max-height: 500%;
+	width: 200%;
+	overflow-y: scroll;
+}
+
+.toast {
+	height:auto;
+	width:60%;
+
+}

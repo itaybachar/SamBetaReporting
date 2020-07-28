@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button';
 import { Modal, Form } from 'react-bootstrap';
+import OrgDropdown from './org-dropdown.component.js'
+import NaicsDropdown from './naics-dropdown.component.js'
 import axios from 'axios';
 
 export default class AddTask extends Component {
@@ -79,11 +81,13 @@ export default class AddTask extends Component {
                                 <Form.Label>NAICS</Form.Label>
                                 <Form.Control placeholder="NAICS" type='number' onChange={(event)=>{this.updateNaics(event)}}/>
                             </Form.Group>
+				<NaicsDropdown></NaicsDropdown>
 
                             <Form.Group controlId="orgid">
                                 <Form.Label>Organization ID</Form.Label>
                                 <Form.Control placeholder="Organization ID" type='number' onChange={(event)=>{this.updateOrg(event)}}/>
                             </Form.Group>
+                            <OrgDropdown></OrgDropdown>
 
                             <Form.Group controlId="frequency">
                                 <Form.Label>Frequency</Form.Label>

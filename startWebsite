@@ -1,0 +1,7 @@
+#!/bin/bash
+export PORT=3000
+export MONGO_URI='mongodb://localhost:27017/sam-beta'
+
+node backend/server.js &
+
+serve -s build &
