@@ -4,16 +4,18 @@ const axios = require('axios');
 const mailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
+const login = require('../credentials').login;
 
 var currentTasks = {};
 
-let transport = mailer.createTransport({
-	service: 'gmail',
-	auth: {
-		user: 'sambeta.noreply@gmail.com',
-		pass: '123698745Asdf'
-	}});
 
+const transporter = mailer.createTransport({
+		service: 'gmail',
+	    auth: {
+		            user: login.user, 
+		            pass: login.pass
+		        }
+});
 
 function startupTasks() {
 	Task.find()
@@ -24,21 +26,29 @@ function startupTasks() {
 }
 
 function addTask(task) {
-	const cronSchedule = `0 17 */${task.frequency} * *`
-	const cronSchedule1 = `*/1 * * * *`
-	console.log('startcron');
-	currentTasks[task._id] = cron.schedule( cronSchedule1, () => { getResults(task) });
+	var cronSchedule;
+	switch(task.frequency) {
+		case '90':
+			cronSchedule = `0 17 * */3 *`;
+			break;
+		case '365':
+			cronSchedule = `0 17 * */12 *`;
+			break;
+		default:
+			cronSchedule = `0 17 */${task.frequency} * *`;
+			break;
+
+	}
+	currentTasks[task._id] = cron.schedule( cronSchedule, () => { getResults(task) });
 
 }
 
 function removeTask(taskId) {
-	console.log('remove');
 	if(currentTasks[taskId])
 		currentTasks[taskId].destroy();
 }
 
 function updateTask(task){
-	console.log('update task')
 	removeTask(task._id);
 	addTask(task);
 }
@@ -50,8 +60,12 @@ function getResults(task) {
 	const naics = task.naics.map(cur => {return cur.naicsCode}).join(',');
 	const org = task.org.map(cur=> {return `${cur.org.orgKey}`}).join(',');
 	var page = 0;
-	console.log(org);
-	var uri = `https://beta.sam.gov/api/prod/sgs/v1/search/?q=${keywords}&naics=${naics}&modified_date.to=${to}&modified_date.from=${from}&index=opp&sort=-relevance&mode=search&is_active=true&page=${page}`
+	var uri = `https://beta.sam.gov/api/prod/sgs/v1/search/?q=${keywords}&modified_date.to=${to}&modified_date.from=${from}&index=opp&sort=-relevance&mode=search&is_active=true&page=${page}`
+	if(task.org.length>0)
+		uri = uri.concat(`&organization_id=${org}`)
+	if(task.naics.length>0)
+		uri = uri.concat(`&naics=${naics}`);
+	console.log(uri);
 
 	axios.get(uri)
 	.then(result => {
@@ -61,11 +75,10 @@ function getResults(task) {
 }
 
 function sendEmail(task,result) {
-	console.log(result)
 	let file = getHtml(result);
 
 	let message  = {
-		from: '',
+		from: 'Automated Message',
 		to: task.email,
 		subject: 'Sam Beta Listings',
 		text: 'This periods listings',
@@ -77,7 +90,7 @@ function sendEmail(task,result) {
 		]
 	};
 
-	transport.sendMail(message, function(e) 
+	transporter.sendMail(message, function(e) 
 		{
 			if(e)
 				console.log(e);
@@ -94,7 +107,6 @@ function getHtml(result) {
 		return `<tr><td><a href='https://beta.sam.gov/opp/${cur._id}/view#description'><div>${cur.title}</div></a></td><td>${cur.descriptions[0].content}</td></tr>`
 	}).join(''));
 
-	console.log(page);
 	return page;
 
 }
@@ -104,8 +116,7 @@ function getDates(interval) {
 	let month = ('0' + (date.getMonth() +1)).slice(-2);
 	let day = ('0' + date.getDate()).slice(-2);
 	const to = `${date.getFullYear()}-${month}-${day}-17:00`;
-
-	date.setDate(date.getDate()-2);
+	date.setDate(date.getDate()-interval);
 	month = ('0' + (date.getMonth() +1)).slice(-2);
 	day = ('0' + date.getDate()).slice(-2);
 	const from = `${date.getFullYear()}-${month}-${day}-17:00`;

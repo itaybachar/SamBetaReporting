@@ -19,11 +19,11 @@ export default class TaskModal extends Component {
 
 		if(props.newTask) {
 			this.state = {
-            			keywords: ' ',
+            			keywords: undefined,
             			frequency: '1',
             			org: [],
             			naics: [],
-            			email: ' ',
+            			email: undefined,
             			show: false,
 				btnText: 'Add',
 				uri: 'http://192.168.0.170:5000/tasks/add'
@@ -65,6 +65,7 @@ export default class TaskModal extends Component {
 	}
 
 	submitTask() {
+		console.log(this.state)
 		axios.post(this.state.uri,this.state)
 		.then(response => {
 			this.setState({ show:false });
@@ -88,7 +89,7 @@ export default class TaskModal extends Component {
 					<Form>
 						<Form.Group controlId='keyboards'>
 							<Form.Label>Keywords</Form.Label>
-							<Form.Control placeholder='Keywords' onChange={(e) => {this.setKeywords(e)}} />
+							<Form.Control placeholder='Keywords' value={this.state.keywords} onChange={(e) => {this.setKeywords(e)}} />
 							<Form.Text className='text-muted'>Comma Separated</Form.Text>
 						</Form.Group>
 						<NaicsDropdown defaultVal={this.state.naics} setHandler={this.setNaics}/>
@@ -110,7 +111,7 @@ export default class TaskModal extends Component {
 						</Form.Group>
 						<Form.Group controlId='formBasicEmail'>
 							<Form.Label>Email Address</Form.Label>
-							<Form.Control type='email' placeholder='Enter Email' onChange={(e) => {this.setEmail(e)}}/>
+							<Form.Control type='email' placeholder='Enter Email' value={this.state.email} onChange={(e) => {this.setEmail(e)}}/>
 						</Form.Group>
 					</Form>
 				</Modal.Body>
