@@ -58,7 +58,7 @@ function processTask(task) {
 	const keywords = task.keywords.replace(',', '').replace(' ', '%20');
 	const naics = task.naics.map(cur => { return cur.naicsCode }).join(',');
 	const org = task.org.map(cur => { return `${cur.org.orgKey}` }).join(',');
-	var baseUri = `https://beta.sam.gov/api/prod/sgs/v1/search/?q=${keywords}&modified_date.to=${to}&modified_date.from=${from}&index=opp&sort=-relevance&mode=search&is_active=true`
+	var baseUri = `https://beta.sam.gov/api/prod/sgs/v1/search/?q=${keywords}&publish_date.to=${to}&publish_date.from=${from}&index=opp&sort=-relevance&mode=search&is_active=true`
 	if (task.org.length > 0)
 		baseUri = baseUri.concat(`&organization_id=${org}`)
 	if (task.naics.length > 0)

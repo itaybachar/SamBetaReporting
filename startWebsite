@@ -2,6 +2,7 @@
 export PORT=3000
 export MONGO_URI='mongodb://localhost:27017/sam-beta'
 
-node backend/server.js &
 
-serve -s build &
+node ~/git/sam-beta/backend/server.js &
+
+serve -s ~/git/sam-beta/build &
