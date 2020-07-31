@@ -15,8 +15,7 @@ const uri = process.env.MONGO_URI;
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 const connection = mongoose.connection;
 
-connection.once( 'open', () =>
-{
+connection.once('open', () => {
     console.log("MongoDB connection established!");
 });
 
@@ -24,7 +23,8 @@ const taskRouter = require('./routes/tasks.js');
 
 app.use('/tasks', taskRouter);
 
-app.listen(port, () =>{
+app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
 scheduler.startupTasks();
